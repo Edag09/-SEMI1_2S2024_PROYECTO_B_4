@@ -1,0 +1,21 @@
+# Para crear el virtual environment
+py -m venv .venv
+
+# Activar el virtual environment
+.venv\Scripts\activate
+ó
+cd .venv
+source bin/activate
+
+# instalar flask
+pip install flask   
+
+# instalar dependencias
+pip install -r requirements.txt
+
+# crear requirements.txt
+pip freeze > requirements.txt
+
+# iniciar 
+flask run --debug --host=127.0.0.1 --port 4000
+flask --app app run --port 4000 --host '0.0.0.0' --debug

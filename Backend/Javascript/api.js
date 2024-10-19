@@ -1,17 +1,17 @@
+require('dotenv').config();
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
+const translatorRoutes = require('./routes/translator.routes');
+
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Habilitar CORS
 app.use(cors());
+app.use(bodyParser.json());
 
-// Ruta GET para la página principal
-app.get('/', (req, res) => {
-    res.send("Hello World");
-});
+app.use('/translator', translatorRoutes);
 
-// Iniciar el servidor en el puerto 5000
-const port = 5000;
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

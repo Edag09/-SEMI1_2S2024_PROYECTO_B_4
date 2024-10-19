@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
-import { Dropdown } from 'primereact/dropdown'; // Cambiado de ListBox a Dropdown
-import { Calendar } from 'primereact/calendar';
 import './Ruser.css'
 
 function Ruser() {
@@ -13,23 +11,15 @@ function Ruser() {
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
-  const [pais, setPais] = useState('');
-  const [genero, setGenero] = useState(null);
-  const [fechaNacimiento, setFechaNacimiento] = useState(null);
-  const [edad, setEdad] = useState('');
+  const [telefono, setTelefono] = useState(''); // Cambiado de país a teléfono
+  const [direccion, setDireccion] = useState(''); // Cambiado de género a dirección
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
   const navigate = useNavigate();
 
-  const genderOptions = [
-    { label: 'Hombre', value: 'Hombre' },
-    { label: 'Mujer', value: 'Mujer' },
-    { label: 'Otro', value: 'Otro' },  // Puedes agregar más opciones si lo deseas
-  ];
-
   const handleRegister = async () => {
     // Validación de campos vacíos
-    if (!nombre || !apellido || !correo || !contrasena || !confirmarContrasena || !pais || !genero || !fechaNacimiento || !edad || !fotoPerfil) {
+    if (!nombre || !apellido || !correo || !contrasena || !confirmarContrasena || !telefono || !direccion || !fotoPerfil) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -40,6 +30,30 @@ function Ruser() {
     }
 
     try {
+      // Crear un objeto FormData para enviar los datos
+      const formData = new FormData();
+      formData.append('nombre', nombre);
+      formData.append('apellido', apellido);
+      formData.append('correo', correo);
+      formData.append('contrasena', contrasena);
+      formData.append('telefono', telefono);
+      formData.append('direccion', direccion);
+      formData.append('fotoPerfil', fotoPerfil);
+
+      // Realizar la petición POST
+
+      const response = await fetch('http://localhost:8000/registrar_usuarios', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+
       navigate('/'); // Redirigir al login después de registrarse
     } catch (error) {
       console.error('Error en la petición:', error);
@@ -83,8 +97,8 @@ function Ruser() {
           </div>
 
           <div className="p-field">
-            <label htmlFor="pais">País o Ciudad</label>
-            <InputText id="pais" value={pais} onChange={(e) => setPais(e.target.value)} placeholder="Ingresa el país o ciudad" />
+            <label htmlFor="telefono">Teléfono</label>
+            <InputText id="telefono" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Ingresa tu teléfono" />
           </div>
 
           <div className="p-field">
@@ -112,18 +126,8 @@ function Ruser() {
           </div>
 
           <div className="p-field">
-            <label htmlFor="gender">Género</label>
-            <Dropdown value={genero} options={genderOptions} onChange={(e) => setGenero(e.value)} placeholder="Selecciona tu género" />
-          </div>
-
-          <div className="p-field">
-            <label htmlFor="birthdate">Fecha de Nacimiento</label>
-            <Calendar id="birthdate" value={fechaNacimiento} onChange={(e) => setFechaNacimiento(e.value)} showIcon />
-          </div>
-
-          <div className="p-field">
-            <label htmlFor="age">Edad</label>
-            <InputText id="age" value={edad} onChange={(e) => setEdad(e.target.value)} placeholder="Ingresa tu edad" />
+            <label htmlFor="direccion">Dirección</label>
+            <InputText id="direccion" value={direccion} onChange={(e) => setDireccion(e.target.value)} placeholder="Ingresa tu dirección" />
           </div>
         </div>
 

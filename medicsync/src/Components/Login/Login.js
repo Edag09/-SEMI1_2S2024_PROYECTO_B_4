@@ -32,7 +32,7 @@ const Login = () => {
         };
     
         try {
-          const response = await fetch("http://localhost:5000/iniciar_sesion", {
+          const response = await fetch("http://localhost:5000/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

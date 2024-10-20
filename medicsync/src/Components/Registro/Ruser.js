@@ -43,7 +43,7 @@ function Ruser() {
         create_at: new Date()
       };
   
-      const response = await fetch('http://localhost:5000/crear_usuario', {
+      const response = await fetch('http://localhost:5000/create_usuario', {
         method: 'POST',
           headers: {
             'Content-Type': 'application/json',

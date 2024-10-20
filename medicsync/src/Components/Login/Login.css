@@ -1,0 +1,96 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(10, 61, 98, 0.8); /* Azul oscuro con opacidad */
+}
+
+h1 {
+    color: #ffff;
+    margin-bottom: 2rem;
+}
+
+.login-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(30, 55, 153, 0.9); /* Fondo opaco para el formulario */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: auto;
+}
+
+.login-sections-horizontal {
+    display: flex;
+    flex-direction: row; /* Hacemos las secciones horizontales */
+    align-items: center;
+    justify-content: space-around;
+}
+
+.login-section {
+    width: 300px;
+    text-align: center;
+    color: white;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.input-field label {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+}
+
+.p-inputtext, .p-password {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.p-button {
+    width: 100%;
+    background-color: #1e3799;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.p-button:hover {
+    background-color: #3c6382;
+}
+
+.p-button-block {
+    width: 100%;
+}
+
+.p-divider-vertical {
+    height: 200px;
+    margin: 0 2rem;
+}
+
+/* Estilo para la sección de la cámara */
+.camera-container {
+    margin-top: 1rem;
+}
+
+.camera-video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid #fff;
+    transform: scaleX(-1); /* Efecto de espejo horizontal */
+}
+
+h2{
+    color: #ffff;
+}

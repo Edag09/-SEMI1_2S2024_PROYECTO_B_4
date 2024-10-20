@@ -11,6 +11,7 @@ app = Flask(__name__)
 # Configuración de la base de datos
 app.config.from_object('config.Config')
 db = Database()
+os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAZMBSHQXGVXKNFOXA'
 
 s3 = boto3.client(
     's3',

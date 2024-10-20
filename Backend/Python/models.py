@@ -4,7 +4,7 @@ from flask import current_app
 class Database:
     def __init__(self):
         self.db = None
-
+        
     def connect(self):
         if self.db is None or not self.db.is_connected():
             self.db = mysql.connector.connect(
@@ -57,10 +57,6 @@ class Database:
         cursor.execute("DELETE FROM usuarios WHERE id = %s", (id,))
         self.db.commit()
         cursor.close()
-
-    # =========================
-    # Funciones para Citas
-    # =========================
 
     def get_citas(self):
         self.connect()

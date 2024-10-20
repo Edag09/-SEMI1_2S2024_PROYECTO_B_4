@@ -16,6 +16,10 @@ pip install -r requirements.txt
 # crear requirements.txt
 pip freeze > requirements.txt
 
+# S3
+pip install boto3
+
 # iniciar 
 flask run --debug --host=127.0.0.1 --port 4000
 flask --app app run --port 4000 --host '0.0.0.0' --debug
+

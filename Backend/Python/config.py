@@ -6,3 +6,7 @@ class Config:
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '*Semi1_Practica1*')
     MYSQL_DB = os.environ.get('MYSQL_DB', 'mediSync')
     MYSQL_CURSORCLASS = 'DictCursor'
+    
+    # Configuración para S3
+    S3_BUCKET = os.environ.get('S3_BUCKET', 'arn:aws:s3:::practica2-semi1-b-2s2024-imageness-g4')
+    S3_KEY = os.environ.get('AWS_ACCESS_KEY_ID', 'AKIAZMBSHQXGVXKNFOXA')

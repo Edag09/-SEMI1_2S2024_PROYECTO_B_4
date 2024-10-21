@@ -1,5 +1,6 @@
 import mysql.connector
 from flask import current_app
+import cognito
 
 class Database:
     def __init__(self):
@@ -32,6 +33,7 @@ class Database:
 
     def create_usuario(self, nombre, apellido, correo, contrasena, telefono, direccion, imagen_ruta, id_rol):
         self.connect()
+        cognito.registrar_usuario_cognito(correo, contrasena, nombre)
         cursor = self.db.cursor()
         cursor.execute("""
             INSERT INTO usuarios (nombre, apellido, correo, contrasena, telefono, direccion, imagen_ruta, id_rol)
@@ -104,6 +106,11 @@ class Database:
 
     def login(self, correo, contrasena):
         self.connect()
+        result = cognito.autenticar_usuario_cognito(correo, contrasena)
+
+        if result is None:
+            return None
+
         cursor = self.db.cursor(dictionary=True)
         cursor.execute("SELECT * FROM usuarios WHERE correo = %s AND contrasena = %s", (correo, contrasena))
         usuario = cursor.fetchone()

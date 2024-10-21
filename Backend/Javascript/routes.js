@@ -4,6 +4,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const bodyParser = require("body-parser");
+const cognito = require("./cognito");
 
 // Configuración de la base de datos
 const Database = require("./models");
@@ -108,6 +109,8 @@ router.post("/create_usuario", async (req, res) => {
     const nombre_foto = `Fotos_Perfil/${nombre}${apellido}${id_rol}.${split[1]}`;
     const url_foto = await uploadFileToS3(imageFilePath, nombre_foto);
 
+    cognito.registrarUsuarioCognito(correo, contrasena, nombre);
+
     // Crear el usuario en la base de datos
     await db.createUsuario(
       nombre,
@@ -166,6 +169,13 @@ router.post("/login", async (req, res) => {
   const { correo, contrasena } = req.body;
   try {
     const usuario = await db.login(correo, contrasena);
+
+    var result = cognito.autenticarUsuarioCognito(correo, contrasena);
+
+    if (result == null) {
+      res.status(406).json({ message: "Usuario no confirmado" });
+    }
+
     if (usuario) {
       const match = await decodePassword(contrasena, usuario.contrasena);
       if (match) {

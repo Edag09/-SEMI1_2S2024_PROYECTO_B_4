@@ -161,3 +161,14 @@ def update_cita(id):
 def delete_cita(id):
     db.delete_cita(id)
     return jsonify({"message": "Cita eliminada exitosamente"})
+
+# Login solo con mysql
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    user = data['correo']
+    password = base64.b64encode(data['contrasena'].encode('utf-8')).decode('utf-8')
+    result = db.login(user, password)
+    if result:
+        return jsonify({"message": "Usuario autenticado exitosamente"}), 200
+    return jsonify({"message": "Usuario no autenticado"}), 401

@@ -161,6 +161,26 @@ router.delete("/delete_usuario/:id", async (req, res) => {
   }
 });
 
+// Login de usuario
+router.post("/login", async (req, res) => {
+  const { correo, contrasena } = req.body;
+  try {
+    const usuario = await db.login(correo, contrasena);
+    if (usuario) {
+      const match = await decodePassword(contrasena, usuario.contrasena);
+      if (match) {
+        res.json({ message: "Login exitoso" });
+      } else {
+        res.status(401).json({ message: "Contraseña incorrecta" });
+      }
+    } else {
+      res.status(404).json({ message: "Usuario no encontrado" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Error en login", error: err });
+  }
+});
+
 // Ver todas las citas
 router.get("/select_citas", async (req, res) => {
   try {

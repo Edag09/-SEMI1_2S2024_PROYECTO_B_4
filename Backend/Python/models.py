@@ -101,3 +101,11 @@ class Database:
         cursor.execute("DELETE FROM citas WHERE id = %s", (id,))
         self.db.commit()
         cursor.close()
+
+    def login(self, correo, contrasena):
+        self.connect()
+        cursor = self.db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM usuarios WHERE correo = %s AND contrasena = %s", (correo, contrasena))
+        usuario = cursor.fetchone()
+        cursor.close()
+        return usuario

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
 import './Ruser.css'
 
 function Ruser() {
@@ -15,10 +16,17 @@ function Ruser() {
   const [direccion, setDireccion] = useState('');
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
+  const [rol, setRol] = useState(null); // Nuevo estado para el rol
   const navigate = useNavigate();
 
+  const roleOptions = [
+    { label: 'Médico', value: 1 },
+    { label: 'Paciente', value: 2 },
+    { label: 'Laborista', value: 3 },
+  ];
+
   const handleRegister = async () => {
-    if (!nombre || !apellido || !correo || !contrasena || !confirmarContrasena || !telefono || !direccion || !fotoPerfil) {
+    if (!nombre || !apellido || !correo || !contrasena || !confirmarContrasena || !telefono || !direccion || !fotoPerfil || !rol) {
       alert('Por favor, completa todos los campos.');
       return;
     }
@@ -30,7 +38,23 @@ function Ruser() {
 
     try{
 
-      // Tiene que ir primero la subida de imagen a la ec2 para poder obtener la url de la imagen
+      const formData = {
+        nombre: nombre,
+        apellido: apellido,
+        imagen_ruta: fotoPerfil,
+      }
+
+      const uploadResponse  = await fetch('http://localhost:4000/subir_perfil', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const uploadResult = await uploadResponse.json();
+      const fotoUrl = uploadResult.url; // URL de la imagen en S3
+
 
       const RegistroData = {
         nombre: nombre,
@@ -39,11 +63,11 @@ function Ruser() {
         contrasena: contrasena,
         telefono: telefono,
         direccion: direccion,
-        fotoPerfil: fotoPerfil,
-        create_at: new Date()
+        imagen_ruta: fotoUrl,
+        id_rol: rol,
       };
   
-      const response = await fetch('http://localhost:5000/create_usuario', {
+      const response = await fetch('http://localhost:4000/create_usuario', {
         method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -173,6 +197,17 @@ function Ruser() {
               placeholder="Ingresa tu dirección" 
             />
           </div>
+          <div className="p-field">
+            <label htmlFor="role">Tipo de Rol</label>
+            <Dropdown 
+              id="role" 
+              value={rol} 
+              options={roleOptions} 
+              onChange={(e) => setRol(e.value)} 
+              placeholder="Selecciona tu rol" 
+            />
+          </div>
+
         </div>
 
         <div className="register-section-button">

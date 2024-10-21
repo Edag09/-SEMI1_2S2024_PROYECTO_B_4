@@ -9,5 +9,5 @@ class Config:
     
     # Configuración para S3
     S3_BUCKET = os.environ.get('S3_BUCKET', 'arn:aws:s3:::practica2-semi1-b-2s2024-imageness-g4')
-    S3_KEY = os.environ.get('AWS_ACCESS_KEY_ID')
-
+    S3_KEY = os.environ.get('AWS_ACCESS_KEY_ID', 'AKIAZMBSHQXGVXKNFOXA')
+    S3_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')

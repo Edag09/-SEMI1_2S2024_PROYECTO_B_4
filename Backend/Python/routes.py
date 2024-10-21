@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config.from_object('config.Config')
 db = Database()
 os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAZMBSHQXGVXKNFOXA'
+os.environ['AWS_SECRET_ACCESS_KEY']
 
 s3 = boto3.client(
     's3',
@@ -65,6 +66,28 @@ def upload_file(picture_path, nombre ):
 def index():
     return jsonify({"message": "Server Python"}), 200
 
+@app.route('/subir_perfil', methods=['POST'])
+def subir_perfil():
+    data = request.json
+    image_file = data['imagen_ruta']  # La imagen se envía como base64 en el request
+    nombre_usuario = data['nombre'] + data['apellido']
+    
+    # Construir el nombre del archivo y la ruta de S3
+    split = image_file.split(".")
+    nombre_foto = "Fotos_Perfil/" + nombre_usuario + "." + split[1]
+    
+    # Subir al bucket S3
+    if upload_file(image_file, nombre_foto):
+        url_foto = "https://practica2-semi1-b-2s2024-imageness-g4.s3.amazonaws.com/" + nombre_foto
+        
+        # Actualizar el campo de la imagen en la base de datos para el usuario
+        db.update_usuario_foto(data['id_usuario'], url_foto)
+        
+        return jsonify({"message": "Imagen subida exitosamente", "url": url_foto}), 200
+    else:
+        return jsonify({"error": "Error al subir la imagen"}), 500
+
+
 # Ver todos los usuarios
 @app.route('/select_usuarios', methods=['GET'])
 def get_usuarios():
@@ -99,20 +122,20 @@ def decode_password(encoded_password):
 @app.route('/create_usuario', methods=['POST'])
 def create_usuario():
     data = request.json
-    image_file =  data['imagen_ruta']  # La imagen se envía en el request con el campo "imagen"
-    split = image_file.split(".")
-    nombre = split[0] + "." + split[1]
-    nombre_foto = "Fotos_Perfil/"+data['nombre']  + data['apellido'] + str(data['id_rol'])+ "."+ split[1]
-     # con el nombre de usuario, asignar nombre a la foto
-    url_foto = "https://practica2-semi1-b-2s2024-imageness-g4.s3.amazonaws.com/" + "Fotos_Perfil/" + nombre_foto 
-    print("url_foto",url_foto)
-    # Subir al bucket S3
-    upload_file(encode_password(image_file), nombre_foto)
-
-    
     encoded_password = encode_password(data['contrasena'])
-    # print(image_url)
-    db.create_usuario(data['nombre'], data['apellido'], data['correo'], encoded_password, data.get('telefono'), data.get('direccion'), url_foto, data['id_rol'])
+    
+    # Guardar en la base de datos sin subir la imagen
+    db.create_usuario(
+        data['nombre'], 
+        data['apellido'], 
+        data['correo'], 
+        encoded_password, 
+        data.get('telefono'), 
+        data.get('direccion'), 
+        data.get['imagen_ruta'],
+        data['id_rol']
+    )
+    
     return jsonify({"message": "Usuario creado exitosamente"}), 201
 
 # Modificar un usuario
@@ -231,7 +254,7 @@ def speak():
         response = polly.synthesize_speech(**params)
         audio_stream = response['AudioStream'].read()
         
-        return Response(audio_stream, 
+        return response(audio_stream, 
             mimetype='audio/mpeg', 
             headers={'Content-Disposition': 'attachment; filename="speech.mp3"'})
     except Exception as e:

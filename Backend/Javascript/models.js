@@ -159,6 +159,16 @@ class Database {
     await this.connect();
     await this.db.execute("DELETE FROM citas WHERE id = ?", [id]);
   }
+
+  // Login de usuario
+  async login(correo, contrasena) {
+    await this.connect();
+    const [usuario] = await this.db.query(
+      "SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?",
+      [correo, contrasena]
+    );
+    return usuario[0];
+  }
 }
 
 module.exports = Database;

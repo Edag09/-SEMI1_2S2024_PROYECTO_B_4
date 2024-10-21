@@ -11,14 +11,13 @@ function Ruser() {
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [confirmarContrasena, setConfirmarContrasena] = useState('');
-  const [telefono, setTelefono] = useState(''); // Cambiado de país a teléfono
-  const [direccion, setDireccion] = useState(''); // Cambiado de género a dirección
+  const [telefono, setTelefono] = useState('');
+  const [direccion, setDireccion] = useState('');
   const [fotoPerfil, setFotoPerfil] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    // Validación de campos vacíos
     if (!nombre || !apellido || !correo || !contrasena || !confirmarContrasena || !telefono || !direccion || !fotoPerfil) {
       alert('Por favor, completa todos los campos.');
       return;
@@ -29,35 +28,41 @@ function Ruser() {
       return;
     }
 
-    try {
-      // Crear un objeto FormData para enviar los datos
-      const formData = new FormData();
-      formData.append('nombre', nombre);
-      formData.append('apellido', apellido);
-      formData.append('correo', correo);
-      formData.append('contrasena', contrasena);
-      formData.append('telefono', telefono);
-      formData.append('direccion', direccion);
-      formData.append('fotoPerfil', fotoPerfil);
+    try{
 
-      // Realizar la petición POST
+      // Tiene que ir primero la subida de imagen a la ec2 para poder obtener la url de la imagen
 
-      const response = await fetch('http://localhost:8000/registrar_usuarios', {
+      const RegistroData = {
+        nombre: nombre,
+        apellido: apellido,
+        correo: correo,
+        contrasena: contrasena,
+        telefono: telefono,
+        direccion: direccion,
+        fotoPerfil: fotoPerfil,
+        create_at: new Date()
+      };
+  
+      const response = await fetch('http://localhost:5000/create_usuario', {
         method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message);
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(RegistroData),
+          }
+      );
+  
+      if (response.ok){
+        alert('Usuario creado correctamente.');
+        navigate('/');
+      }
+      else {
+        alert('Error al crear el usuario.');
       }
 
-
-      navigate('/'); // Redirigir al login después de registrarse
-    } catch (error) {
-      console.error('Error en la petición:', error);
-      alert('Error al conectar con el servidor.');
+    }catch(error){
+      console.error('Error en el registro:', error);
+      alert('Error al registrar el usuario. Por favor, intenta de nuevo.');
     }
   };
 
@@ -83,22 +88,42 @@ function Ruser() {
         <div className="register-section">
           <div className="p-field">
             <label htmlFor="name">Nombre</label>
-            <InputText id="name" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Ingresa tu nombre" />
+            <InputText 
+              id="name" 
+              value={nombre} 
+              onChange={(e) => setNombre(e.target.value)} 
+              placeholder="Ingresa tu nombre" 
+            />
           </div>
 
           <div className="p-field">
             <label htmlFor="apellido">Apellido</label>
-            <InputText id="apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} placeholder="Ingresa tu apellido" />
+            <InputText 
+              id="apellido" 
+              value={apellido} 
+              onChange={(e) => setApellido(e.target.value)} 
+              placeholder="Ingresa tu apellido" 
+            />
           </div>
 
           <div className="p-field">
             <label htmlFor="email">Correo Electrónico</label>
-            <InputText id="email" value={correo} onChange={(e) => setCorreo(e.target.value)} placeholder="Ingresa tu correo electrónico" />
+            <InputText 
+              id="email" 
+              value={correo} 
+              onChange={(e) => setCorreo(e.target.value)} 
+              placeholder="Ingresa tu correo electrónico" 
+            />
           </div>
 
           <div className="p-field">
             <label htmlFor="telefono">Teléfono</label>
-            <InputText id="telefono" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Ingresa tu teléfono" />
+            <InputText 
+              id="telefono" 
+              value={telefono} 
+              onChange={(e) => setTelefono(e.target.value)} 
+              placeholder="Ingresa tu teléfono" 
+            />
           </div>
 
           <div className="p-field">
@@ -117,23 +142,50 @@ function Ruser() {
         <div className="register-section">
           <div className="p-field">
             <label htmlFor="password">Contraseña</label>
-            <Password id="password" value={contrasena} onChange={(e) => setContrasena(e.target.value)} className="custom-password" placeholder="Ingresa tu contraseña" feedback={false} />
+            <Password 
+              id="password" 
+              value={contrasena} 
+              onChange={(e) => setContrasena(e.target.value)} 
+              className="custom-password" 
+              placeholder="Ingresa tu contraseña" 
+              feedback={false} 
+            />
           </div>
 
           <div className="p-field">
             <label htmlFor="confirmPassword">Confirmar Contraseña</label>
-            <Password id="confirmPassword" value={confirmarContrasena} onChange={(e) => setConfirmarContrasena(e.target.value)} className="custom-password" placeholder="Confirma tu contraseña" feedback={false} />
+            <Password 
+              id="confirmPassword" 
+              value={confirmarContrasena} 
+              onChange={(e) => setConfirmarContrasena(e.target.value)} 
+              className="custom-password" 
+              placeholder="Confirma tu contraseña" 
+              feedback={false} 
+            />
           </div>
 
           <div className="p-field">
             <label htmlFor="direccion">Dirección</label>
-            <InputText id="direccion" value={direccion} onChange={(e) => setDireccion(e.target.value)} placeholder="Ingresa tu dirección" />
+            <InputText 
+              id="direccion" 
+              value={direccion} 
+              onChange={(e) => setDireccion(e.target.value)} 
+              placeholder="Ingresa tu dirección" 
+            />
           </div>
         </div>
 
         <div className="register-section-button">
-          <Button label="Listo!" className="p-button-success" onClick={handleRegister} />
-          <Button label="Cancelar" className="p-button-secondary" onClick={() => navigate('/')} />
+          <Button 
+            label="Listo!" 
+            className="p-button-success" 
+            onClick={handleRegister} 
+          />
+          <Button 
+            label="Cancelar" 
+            className="p-button-secondary" 
+            onClick={() => navigate('/')} 
+          />
         </div>
       </div>
     </div>

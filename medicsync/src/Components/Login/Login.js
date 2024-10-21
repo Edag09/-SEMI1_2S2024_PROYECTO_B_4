@@ -10,6 +10,8 @@ import 'primeicons/primeicons.css';
 import './Login.css';
 
 const Login = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const videoRef = useRef(null);
     const [isCameraOn, setIsCameraOn] = useState(false);
@@ -17,6 +19,37 @@ const Login = () => {
     const goToRegister = () => {
         navigate('/registro');
     };
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+          alert("Por favor, complete todos los campos");
+          return;
+        }
+    
+        const loginData = {
+          correo: email,
+          contrasena: password,
+        };
+    
+        try {
+          const response = await fetch("http://localhost:5000/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(loginData),
+            }
+          );
+    
+          if (response.ok) {
+            alert("Inicio de sesión exitoso");
+          } else {
+            alert("Error en el inicio de sesión");
+          }
+        } catch (error) {
+          alert("Error en la petición: " + error);
+        }
+      };
 
 
     const handleFaceRecognition = async () => {
@@ -34,26 +67,43 @@ const Login = () => {
         <div className="login-container">
             <h1>MedicSync</h1>
             <div className="login-box">
-                {/* Sección horizontal */}
                 <div className="login-sections-horizontal">
-                    {/* Formulario de Iniciar Sesión */}
                     <div className="login-section">
                         <h2>Iniciar Sesión</h2>
-
+                        
                         <div className="input-field">
                             <label htmlFor="email">Correo Electrónico</label>
-                            <InputText id="email" placeholder="Correo Electrónico" />
+                            <InputText 
+                                id="email" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Correo Electrónico" />
                         </div>
 
                         <div className="input-field" style={{ marginTop: '1rem' }}>
                             <label htmlFor="password">Contraseña</label>
-                            <Password id="password" placeholder="Contraseña" feedback={false} toggleMask />
+                            <Password 
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Contraseña" 
+                                feedback={false} 
+                                toggleMask />
                         </div>
 
-                        <Button label="Iniciar Sesión" className="p-button-rounded p-button-block" style={{ marginTop: '2rem' }} />
+                        <Button 
+                            label="Iniciar Sesión" 
+                            onClick={handleLogin}
+                            className="p-button-rounded p-button-block" 
+                            style={{ marginTop: '2rem' }} 
+                            />
                         
                         {/* Botón para redirigir al registro */}
-                        <Button label="Registrarse" className="p-button-rounded p-button-block" style={{ marginTop: '1rem' }} onClick={goToRegister} />
+                        <Button 
+                            label="Registrarse" 
+                            className="p-button-rounded p-button-block" 
+                            style={{ marginTop: '1rem' }} 
+                            onClick={goToRegister} />
                     </div>
 
                     <Divider layout="vertical" />
@@ -72,6 +122,6 @@ const Login = () => {
             </div>
         </div>
     );
-};
+}
 
 export default Login;

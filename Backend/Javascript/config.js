@@ -12,7 +12,7 @@ class Config {
   // Configuración para S3
   static S3_BUCKET =
     process.env.S3_BUCKET || "practica2-semi1-b-2s2024-imageness-g4";
-  static S3_KEY = process.env.AWS_ACCESS_KEY_ID || "AKIAZMBSHQXGVXKNFOXA";
+  static S3_KEY = process.env.AWS_ACCESS_KEY_ID;
 
   static S3_REGION = process.env.AWS_REGION || "us-east-1";
 }

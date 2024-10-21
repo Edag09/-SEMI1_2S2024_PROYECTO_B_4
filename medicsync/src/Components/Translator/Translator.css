@@ -2,9 +2,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; 
+    justify-content: flex-start; /* Alinear los elementos al inicio */
     background-color: rgba(30, 55, 153, 0.9);
-    padding: 2%; /* Cambiado a porcentaje */
+    padding: 1.5%; /* Reducido para menos espacio interno */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     width: 90%; /* Cambiado a porcentaje para que sea responsivo */
@@ -26,7 +26,7 @@
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    margin-bottom: 2%; /* Cambiado a porcentaje */
+    margin-bottom: 1.5%; /* Reducido para menos espacio entre campos */
 }
 
 .input-field label {
@@ -52,15 +52,15 @@
 }
 
 .translation-result {
-    margin-top: 2%; /* Cambiado a porcentaje */
-    padding: 2%; /* Cambiado a porcentaje */
+    margin-top: 1.5%; /* Reducido para menos espacio */
+    padding: 1.5%; /* Reducido para menos espacio interno */
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     text-align: center;
     color: white;
     width: 100%;
-    min-height: 50px;
-    max-height: 150px; /* Limitar la altura máxima para texto largo */
+    min-height: 40px; /* Ajustado para menos altura mínima */
+    max-height: 120px; /* Limitar la altura máxima para texto largo */
     overflow-y: auto;  /* Mostrar barra de desplazamiento vertical si el texto es largo */
     word-wrap: break-word; /* Ajustar el texto para que no se salga del cuadro */
 }
@@ -78,5 +78,12 @@ h2 {
 
 h3 {
     margin-top: 0.2rem; /* Reduce el margen superior del h3 */
-    margin-bottom: 2.5rem; /* Reduce el margen inferior del h2 */
+    margin-bottom: 2.5rem; /* Reduce el margen inferior del h3 */
+}
+
+.audio-buttons {
+    display: flex; /* Flexbox para alinear los botones horizontalmente */
+    justify-content: space-between; /* Espacio entre los botones */
+    width: 100%; /* Asegura que ocupe el ancho total */
+    margin-top: 1rem; /* Margen superior para separación */
 }

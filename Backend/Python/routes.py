@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Configuración de la base de datos
 app.config.from_object('config.Config')
 db = Database()
-os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAZMBSHQXGVXKNFOXA'
+os.environ['AWS_ACCESS_KEY_ID'] = ''
 
 s3 = boto3.client(
     's3',
@@ -161,3 +161,68 @@ def update_cita(id):
 def delete_cita(id):
     db.delete_cita(id)
     return jsonify({"message": "Cita eliminada exitosamente"})
+
+# Inicializar el cliente de Translate de AWS usando boto3
+translate = boto3.client(
+    'translate',
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID_TRANSLATOR'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY_TRANSLATOR'),
+    region_name=os.getenv('AWS_REGION_TRANSLATOR')
+)
+
+@app.route('/translate', methods=['POST'])
+def translate_text():
+    data = request.get_json()
+
+    # Extraer los parámetros del cuerpo de la solicitud
+    text = data.get('text')
+    source_language = data.get('sourceLanguage')
+    target_language = data.get('targetLanguage')
+
+    # Validar si faltan parámetros
+    if not text or not source_language or not target_language:
+        return jsonify({'error': 'Faltan datos de entrada'}), 400
+
+    # Parámetros para la llamada al servicio de AWS Translate
+    params = {
+        'Text': text,
+        'SourceLanguageCode': source_language,
+        'TargetLanguageCode': target_language
+    }
+
+    try:
+        # Llamar a la función de traducción
+        response = translate.translate_text(**params)
+        return jsonify({'translatedText': response.get('TranslatedText')})
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'Error en la traducción'}), 500
+
+# Configuración de AWS Polly
+polly = boto3.client('polly',
+    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID_TRANSLATOR'),
+    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY_TRANSLATOR'),
+    region_name=os.environ.get('AWS_REGION_TRANSLATOR')
+)
+
+@app.route('/speak', methods=['POST'])
+def speak():
+    data = request.json
+    text = data.get('text')
+
+    params = {
+        'Text': text,
+        'OutputFormat': 'mp3',
+        'VoiceId': 'Mia'
+    }
+
+    try:
+        response = polly.synthesize_speech(**params)
+        audio_stream = response['AudioStream'].read()
+        
+        return Response(audio_stream, 
+            mimetype='audio/mpeg', 
+            headers={'Content-Disposition': 'attachment; filename="speech.mp3"'})
+    except Exception as e:
+        print(f'Error: {e}')
+        return jsonify({'error': 'Error al generar el audio.'}), 500
